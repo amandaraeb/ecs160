@@ -1,0 +1,16 @@
+Page to edit name
+<br>
+Current name:
+{{ name }}
+
+ <form action="/accounts/edit_name_success" method='post'>
+
+{% csrf_token %}
+
+  First name:<br>
+  <input type="text" name="firstname">
+  <br>
+  Last name:<br>
+  <input type="text" name="lastname">
+  <input type="submit" value="Submit" />
+</form> 
