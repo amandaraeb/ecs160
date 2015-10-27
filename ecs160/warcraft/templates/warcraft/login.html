@@ -1,0 +1,17 @@
+{%extends "warcraft/base.html"%}
+
+{%block content%}
+
+    <h2>Login</h2>
+    
+    <form enctype="multipart/form-data" action="/accounts/login/" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <input type = "submit" value="Login" />
+        
+    </form>
+
+<a href="/accounts/password_reset/"> Forgot Password? </a>
+    
+{% endblock %}
