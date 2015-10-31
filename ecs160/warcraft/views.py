@@ -12,9 +12,11 @@ from django.core.mail import send_mail
 from warcraft.models import User
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
+from .models import LoggedUser
 
+from .forms import AuthenticationForm, RegistrationForm, EditProfileForm, ChangePasswordForm
 
-from .forms import AuthenticationForm, RegistrationForm
+from .tasks import *
 
 media = '/home/apmishra100/ecs160/media/'
 
@@ -64,6 +66,7 @@ def login(request):
             user = authenticate(userName=request.POST['userName'], password=request.POST['password'])
             if user is not None:
                 if user.is_active:
+                    user.login_web = True
                     django_login(request, user)
                     return redirect('/accounts/loggedin')
                 else:
@@ -122,7 +125,45 @@ def invalid_login(request):
     emptystring=""
     return render(request, 'warcraft/invalid_login.html', {'user_name':emptystring, 'message':message})
     
+def edit_profile(request):
+    if request.method == "POST":
+        form = EditProfileForm(data=request.POST, instance=request.user)
+        if form.is_valid():
+            user = form.save()
+            if 'picture' in request.FILES:
+              user.picture = request.FILES['picture']
+            user.save()
+            picture = request.user.picture
+            fname = request.user.firstName
+            lname = request.user.lastName
+            email = request.user.email
+            return render(request, 'warcraft/edit_profile_success.html', {'full_name': fname+" "+lname, 'picture':picture, 'email':email})
+    else:
+        form = EditProfileForm(instance=request.user)
+    return render(request, 'warcraft/edit_profile.html', {'form': form})
     
+def edit_profile_success(request):
+    fname = request.user.firstName
+    lname = request.user.lastName
+    email = request.user.email
+    picture = request.user.picture
+    return render(request, 'warcraft/edit_profile_success.html', {'full_name': fname+" "+lname, 'email': email, 'picture':picture})
+
+def change_password(request,):
+    if request.method == "POST":
+        form = ChangePasswordForm(data=request.POST, instance=request.user)
+        if form.is_valid():
+            user = form.save()
+            return render(request, 'warcraft/change_password_success.html')
+    else:
+        form = ChangePasswordForm(instance=request.user)
+    return render_to_response('warcraft/change_password.html', {'form': form}, context_instance=RequestContext(request))
+
+def change_password_success (request):
+    return render(request, 'warcraft/change_password_success.html')
+    
+    
+
 def register_user(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST, request.FILES)
@@ -157,9 +198,27 @@ def internalLogin (request):
         user = auth.authenticate(username=username, password=password)
         if user is not None:
             if user.is_active is not False:
-                auth.login(request, user)
+                user.login_internal = True
+                django_login(request, user)
                 return JsonResponse({'LoginStatus': 'Success'})
             else:
-                return JsonResponse({'LoginStatus': user.confirmation_key, 'Email': user.email} )
+                return JsonResponse({'LoginStatus': 'Unverified'} )
         else:
             return JsonResponse({'LoginStatus': 'Incorrect Credentials'})
+
+def webLoggedIn (request):
+    web_users = LoggedUser.objects.all().filter(web=True)
+    return render(request, 'warcraft/web_users.html', {'users' : web_users})
+    
+def internalLoggedIn (request):
+    internal_users = LoggedUser.objects.all().filter(internal=True)
+    return render(request, 'warcraft/internal_users.html', {'users' : internal_users})
+    
+def downloads(request):
+    template = loader.get_template('warcraft/downloads.html')
+    return HttpResponse(template.render())
+
+def send_something(request):
+    send_something_1()
+    send_something_2()
+    return render(request, 'warcraft/send_something.html')

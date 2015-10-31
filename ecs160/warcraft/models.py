@@ -5,7 +5,9 @@ from django.contrib.auth.models import AbstractBaseUser
 from simple_email_confirmation import SimpleEmailConfirmationUserMixin
 from django.contrib.auth.models import UserManager
 from django.contrib.auth.models import BaseUserManager
-
+from django.contrib.auth.signals import user_logged_in, user_logged_out
+#from django_cron import CronJobBase, Schedule
+from django.core.mail import send_mail
 
 # Create your models here.
 
@@ -16,6 +18,32 @@ from django.contrib.auth.models import BaseUserManager
     
     def __unicode__(self):
         return self.user.usernam'''
+
+class LoggedUser(models.Model):
+    user = models.ForeignKey('User')
+    web = models.BooleanField(default=False)
+    internal = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return self.user.userName
+
+    def login_user(sender, request, user, **kwargs):
+        try:
+            e = LoggedUser.objects.get(user=user)
+        except LoggedUser.DoesNotExist:
+            LoggedUser(user=user, web=user.login_web, internal=user.login_internal).save()
+
+    def logout_user(sender, request, user, **kwargs):
+        try:
+            u = LoggedUser.objects.get(user=user)
+            u.delete()
+        except LoggedUser.DoesNotExist:
+            pass
+
+    user_logged_in.connect(login_user)
+    user_logged_out.connect(logout_user)
+
+
 
 class CustomUserManager(BaseUserManager):
 
@@ -38,14 +66,16 @@ class CustomUserManager(BaseUserManager):
         
 class User(SimpleEmailConfirmationUserMixin, AbstractBaseUser):
         userName = models.CharField(max_length=31, unique = True)
-        picture =models.FileField(upload_to="images")
+        picture =models.ImageField(upload_to="images")
         firstName = models.CharField(max_length=31)
         lastName = models.CharField(max_length=31)
         email = models.EmailField('email address')
         is_active = models.BooleanField(default = False)
         is_admin = models.BooleanField(default = False)
         is_online = models.BooleanField(default = False)
-        
+        login_internal = models.BooleanField(default = False)
+        login_web = models.BooleanField(default = False)
+        emailEvery = models.IntegerField(default = 0)
         USERNAME_FIELD = 'userName'
         REQUIRED_FIELDS = []
         
@@ -73,3 +103,13 @@ class User(SimpleEmailConfirmationUserMixin, AbstractBaseUser):
             
         def get_email(self):
             return self.email
+
+
+'''lass MyCronJob(CronJobBase):
+    RUN_EVERY_MINS = 1
+
+    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
+    code = 'my_cron_job'
+
+    def do(self):
+      send_mail('Test', 'testingcron', 'chriscraftecs160@gmail.com', 'amandaraebrindle8@gmail.com', fail_silently = True)'''

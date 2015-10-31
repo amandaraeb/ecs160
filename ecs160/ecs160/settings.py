@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'simple_email_confirmation',
     'warcraft',
+    "django_cron",
 )
 
 MIDDLEWARE_CLASSES = (
@@ -51,6 +52,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 )
+
+CRON_CLASSES = {
+  "warcraft.models.MyCronJob",
+}
 
 ROOT_URLCONF = 'ecs160.urls'
 
@@ -116,3 +121,17 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'chriscraftecs160@gmail.com'
 EMAIL_HOST_PASSWORD = 'webserver'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# CELERY STUFF
+
+BROKER_URL = 'redis://localhost:6379'
+
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+
+CELERY_TASK_SERIALIZER = 'json'
+
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_TIMEZONE = 'Africa/Nairobi'
