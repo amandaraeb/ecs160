@@ -169,10 +169,10 @@ def register_user(request):
         form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
-            link = "http://uakk27772f0b.amandaraeb.koding.io:8000/accounts/activate/%s/%s/" %(user.userName, user.confirmation_key)
+            link = "http://amandaraeb.koding.io:8000/accounts/activate/%s/%s/" %(user.userName, user.confirmation_key)
             picture = user.picture
             d = Context({'username':user.userName, 'link':link, 'avatar':picture}) 
-            message = "%s please visit http://uakk27772f0b.amandaraeb.koding.io:8000/accounts/activate/%s/%s/ to activate your account." %(user.userName, user.userName, user.confirmation_key)
+            message = "%s please visit http://amandaraeb.koding.io:8000/accounts/activate/%s/%s/ to activate your account." %(user.userName, user.userName, user.confirmation_key)
             plaintext = get_template('warcraft/email.txt')
             htmly = get_template('warcraft/email.html')
             text_content = plaintext.render(d)
@@ -218,7 +218,11 @@ def downloads(request):
     template = loader.get_template('warcraft/downloads.html')
     return HttpResponse(template.render())
 
+def compose_success(request):
+    x = request.POST.get("recipient", "")
+    send_mail('You sent mail!', 'You send a message!', 'chriscraftecs160@gmail.com', [request.user.email], fail_silently=False)
+    return render(request, 'warcraft/compose_success.html', {'recipient' : x})
+
 def send_something(request):
     send_something_1()
-    send_something_2()
     return render(request, 'warcraft/send_something.html')

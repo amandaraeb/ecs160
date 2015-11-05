@@ -6,8 +6,6 @@ from simple_email_confirmation import SimpleEmailConfirmationUserMixin
 from django.contrib.auth.models import UserManager
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.signals import user_logged_in, user_logged_out
-#from django_cron import CronJobBase, Schedule
-from django.core.mail import send_mail
 
 # Create your models here.
 
@@ -75,9 +73,10 @@ class User(SimpleEmailConfirmationUserMixin, AbstractBaseUser):
         is_online = models.BooleanField(default = False)
         login_internal = models.BooleanField(default = False)
         login_web = models.BooleanField(default = False)
-        emailEvery = models.IntegerField(default = 0)
         USERNAME_FIELD = 'userName'
         REQUIRED_FIELDS = []
+        emailEvery= models.IntegerField(default = 0)
+        has_messages = models.BooleanField(default = False)
         
         objects = CustomUserManager()
 
@@ -103,13 +102,3 @@ class User(SimpleEmailConfirmationUserMixin, AbstractBaseUser):
             
         def get_email(self):
             return self.email
-
-
-'''lass MyCronJob(CronJobBase):
-    RUN_EVERY_MINS = 1
-
-    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-    code = 'my_cron_job'
-
-    def do(self):
-      send_mail('Test', 'testingcron', 'chriscraftecs160@gmail.com', 'amandaraebrindle8@gmail.com', fail_silently = True)'''

@@ -6,4 +6,4 @@ if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
 if (navigator.appVersion.indexOf("iOS")!=-1) OSName="iOS";
 if (navigator.appVersion.indexOf("Android")!=-1) OSName="Android";
 
-document.write('Your OS: '+OSName);
+document.write('Your OS: '+ OSName + ' download your version here');
