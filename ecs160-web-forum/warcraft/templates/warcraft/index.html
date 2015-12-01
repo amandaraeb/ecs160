@@ -1,0 +1,75 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{% static 'warcraft/index.css' %}">
+<style>
+a:link {
+    text-decoration: none;
+    color:white;
+}
+
+a:visited {
+    text-decoration: none;
+    color:white;
+}
+
+a:hover {
+    text-decoration: underline;
+    color:white;
+}
+
+a:active {
+    text-decoration: underline;
+    color:white;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>CHRISCRAFT: TIDES OF NITTA</h1>
+<p class = "butn1"><a href = "/accounts/login">Log In</a></p>
+<p class = "butn2"><a href = "/accounts/register">Register</a></p>
+</div>
+
+<div class="row">
+<div class="col-3 col-s-3 menu">
+<ul>
+<li><a href="/downloads">Download</a></li>
+<li>Forums</li>
+<li>Contact</li>
+<li>About</li>
+<li>Game Statistics</li>
+<li>Live Stream</li>
+</ul>
+</div>
+
+<div class="col-6 col-s-9">
+<h1>The Game</h1>
+<p> Chriscraft: Tides of Nitta is a clone of 1995 DOS RTS game Warcraft II.  </p>
+ <img src="{%static 'warcraft/images/Splash.png' %}" width="500" height="300">
+</div>
+
+<div class="col-3 col-s-12">
+<div class="aside">
+<h2>What?</h2>
+<p>Chriscraft is a fantasy-themed real-time strategy game.</p>
+<h2>Who?</h2>
+<p>Engineering students at UC Davis have created a clone of Warcraft II.</p>
+<h2>How?</h2>
+<p>Multiple teams are working on various platforms.</p>
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+<p>This website allows users to sign up for free and unleash amazing things such as forums and much more.</p>
+</div>
+ 
+
+</body>
+</html>
